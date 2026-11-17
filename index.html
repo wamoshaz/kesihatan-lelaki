@@ -213,6 +213,50 @@
   .sheet p { font-size: 13.5px; color: var(--muted); margin: 14px 0 18px; }
   .sheet-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
+
+  /* ---------- Sorotan eBook ---------- */
+  .ebook {
+    position: relative; overflow: hidden; display: flex; align-items: center; gap: 32px;
+    margin-bottom: 22px; padding: 28px 36px; border-radius: var(--radius); color: #fff;
+    background:
+      radial-gradient(520px 260px at 100% 0%, rgba(240,180,41,.22), transparent 65%),
+      linear-gradient(120deg, var(--navy) 0%, #0e5a45 100%);
+    border: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 18px 44px rgba(11,59,46,.22);
+  }
+  .ebook-cover { flex: 0 0 auto; perspective: 900px; }
+  .ebook-cover a { display: block; }
+  .ebook-cover img {
+    display: block; width: 150px; height: auto; border-radius: 3px 8px 8px 3px;
+    transform: rotateY(-14deg) rotateZ(-1deg); transform-origin: left center;
+    box-shadow: -4px 0 0 rgba(0,0,0,.18) inset, 14px 18px 30px rgba(0,0,0,.45);
+    transition: transform .35s ease;
+  }
+  .ebook:hover .ebook-cover img { transform: rotateY(-4deg) rotateZ(0) translateY(-4px); }
+  .ebook-body { min-width: 0; }
+  .ebook-tag {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 800;
+    letter-spacing: .14em; text-transform: uppercase; color: #1b1b1b;
+    background: var(--gold); padding: 5px 12px; border-radius: 999px;
+  }
+  .ebook h2 { margin: 14px 0 8px; font-size: clamp(19px, 2.4vw, 25px); line-height: 1.25; font-weight: 800; }
+  .ebook p { margin: 0 0 20px; max-width: 620px; font-size: 14.5px; color: #d6e9e1; }
+  .ebook-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .ebook-btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 12px;
+    font-weight: 700; font-size: 14.5px; text-decoration: none; transition: .2s;
+  }
+  .ebook-btn svg { width: 18px; height: 18px; }
+  .ebook-btn.primary { background: var(--gold); color: #1b1b1b; }
+  .ebook-btn.primary:hover { background: #ffc94a; transform: translateY(-1px); }
+  .ebook-btn.ghost { color: #fff; border: 1.5px solid rgba(255,255,255,.35); }
+  .ebook-btn.ghost:hover { background: rgba(255,255,255,.1); }
+  .ebook-btn small { font-weight: 600; opacity: .7; }
+  @media (max-width: 640px) {
+    .ebook { flex-direction: column; align-items: flex-start; gap: 18px; padding: 22px 20px; }
+    .ebook-cover img { width: 110px; }
+    .ebook-btn { flex: 1 1 auto; justify-content: center; }
+  }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -237,6 +281,26 @@
 </header>
 
 <main>
+  <section class="ebook" aria-labelledby="ebook-title">
+    <div class="ebook-cover">
+      <a href="garis-panduan/" aria-label="Baca eBook Garis Panduan"><img src="garis-panduan/assets/cover-440.webp" alt="Kulit hadapan Garis Panduan SRH Lelaki, Edisi Pertama 2023" width="150" height="212" loading="lazy"></a>
+    </div>
+    <div class="ebook-body">
+      <span class="ebook-tag">eBook Interaktif</span>
+      <h2 id="ebook-title">Garis Panduan Pengesanan Awal Masalah Kesihatan Seksual dan Reproduktif (SRH) Lelaki di Penjagaan Kesihatan Primer</h2>
+      <p>Edisi Pertama 2023 · 52 halaman. Selak halaman seperti buku sebenar, lompat terus ke bab, dan zum carta alir serta jadual.</p>
+      <div class="ebook-actions">
+        <a class="ebook-btn primary" href="garis-panduan/">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/></svg>
+          Baca eBook
+        </a>
+        <a class="ebook-btn ghost" href="garis-panduan/Garis-Panduan-SRH-Lelaki-2023.pdf" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+          Muat turun PDF <small>(12 MB)</small>
+        </a>
+      </div>
+    </div>
+  </section>
   <div class="toolbar">
     <div>
       <h2>Senarai Sumber</h2>
