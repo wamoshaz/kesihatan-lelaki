@@ -24,7 +24,8 @@
     --hdr:60px; --thumbs:118px;
   }
   *{box-sizing:border-box}
-  html,body{margin:0;height:100%;overflow:hidden}
+  html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none}
+  body.touch main{touch-action:none}
   body{
     font-family:"Plus Jakarta Sans","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     color:var(--ink);
@@ -314,10 +315,13 @@
   var start=parseInt((location.hash.match(/p=(\d+)/)||[])[1]||"1",10);
   start=Math.max(1,Math.min(TOTAL,start));
   loadAround(start-1);
+  // Peranti sentuh: gunakan pengesan leret sendiri (lebih stabil di Android)
+  var TOUCH = (window.matchMedia && matchMedia("(pointer: coarse)").matches) || (navigator.maxTouchPoints>0 && !matchMedia("(hover: hover)").matches);
+  if(TOUCH) document.body.classList.add("touch");
   var pf=new St.PageFlip(bookEl,{
     width:PAGE_W,height:PAGE_H,size:"stretch",minWidth:MINW,maxWidth:2000,minHeight:MINW/ (PAGE_W/PAGE_H),maxHeight:2828,
     showCover:true,usePortrait:true,autoSize:true,maxShadowOpacity:.45,flippingTime:650,
-    mobileScrollSupport:false,startPage:start-1,drawShadow:true,showPageCorners:true
+    mobileScrollSupport:false,startPage:start-1,drawShadow:true,showPageCorners:!TOUCH,useMouseEvents:!TOUCH
   });
   pf.loadFromHTML(bookEl.querySelectorAll(".page"));
 
@@ -450,6 +454,31 @@
   $("btnZoom").onclick=openZoom; $("zClose").onclick=closeZoom;
   $("zIn").onclick=function(){zoomBy(1.4)}; $("zOut").onclick=function(){zoomBy(1/1.4)}; $("zFit").onclick=zFit;
   $("bookWrap").addEventListener("dblclick",openZoom);
+
+  /* ---------- Leret / ketik untuk peranti sentuh ---------- */
+  if(TOUCH){
+    var stage=document.querySelector("main"), t0=null, lastTap=0, tapTimer=null;
+    stage.addEventListener("touchstart",function(e){
+      if(e.touches.length>1){ t0=null; clearTimeout(tapTimer); openZoom(); return; }
+      var t=e.touches[0]; t0={x:t.clientX,y:t.clientY,time:Date.now()};
+    },{passive:true});
+    stage.addEventListener("touchmove",function(e){ if(t0) e.preventDefault(); },{passive:false});
+    stage.addEventListener("touchend",function(e){
+      if(!t0) return;
+      var t=e.changedTouches[0], dx=t.clientX-t0.x, dy=t.clientY-t0.y, dt=Date.now()-t0.time; t0=null;
+      if(Math.abs(dx)>35 && Math.abs(dx)>Math.abs(dy)*1.2 && dt<900){
+        clearTimeout(tapTimer); if(dx<0) pf.flipNext(); else pf.flipPrev(); return;
+      }
+      if(Math.abs(dx)<12 && Math.abs(dy)<12 && dt<350){
+        var now=Date.now();
+        if(now-lastTap<320){ clearTimeout(tapTimer); lastTap=0; openZoom(); return; }
+        lastTap=now; var x=t.clientX;
+        tapTimer=setTimeout(function(){ // ketik tepi kiri/kanan untuk selak
+          if(x<innerWidth*0.3) pf.flipPrev(); else if(x>innerWidth*0.7) pf.flipNext();
+        },330);
+      }
+    });
+  }
   zstage.addEventListener("wheel",function(e){e.preventDefault(); zoomAt(e.deltaY<0?1.15:1/1.15,e.clientX,e.clientY);},{passive:false});
   zstage.addEventListener("pointerdown",function(e){
     zstage.setPointerCapture(e.pointerId); ptrs[e.pointerId]={x:e.clientX,y:e.clientY};
